@@ -1,4 +1,4 @@
-Interactive Honeypot & Threat Analysis Dashboard
+# Interactive Honeypot & Threat Analysis Dashboard
 
 This project is a 4-container, Docker-based threat intelligence system designed to capture, parse, and visualize real-time cyberattack data from a live Cowrie honeypot.
 
@@ -54,6 +54,7 @@ Top 10 most common usernames.
 Top 10 most common passwords.
 
 <img width="960" height="510" alt="33" src="https://github.com/user-attachments/assets/6d51a86c-c9d4-4f70-89ff-50da1e087d3b" />
+
 
 
 
