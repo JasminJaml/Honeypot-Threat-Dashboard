@@ -9,16 +9,13 @@ The system is deployed on an AWS EC2 instance and uses the ELK Stack (Elasticsea
 The system evolved from a 3-container to a 4-container architecture to resolve critical data-flow challenges:
 
 ### Container Components
-Cowrie (The Honeypot): The sensor, exposed to the internet. It catches SSH/Telnet attacks and writes them to a cowrie.json log file in a shared volume.
-
-Filebeat (The "Delivery Truck"): The log shipper. It monitors the shared log file, parses the NDJSON (Newline Delimited JSON) data, and ships the parsed fields to Elasticsearch.
-
-Elasticsearch (The Database): The "engine." It receives the parsed JSON from Filebeat and indexes it, making it searchable.
-
-Kibana (The Dashboard): The "monitor." It reads from Elasticsearch and displays the data in real-time visualizations (pie charts, bar charts, etc.).
+- **Cowrie (Honeypot)**: Internet-exposed sensor capturing SSH/Telnet attacks, writing JSON logs to shared volume
+- **Filebeat (Log Shipper)**: Monitors and parses honeypot logs, ships structured data to Elasticsearch
+- **Elasticsearch (Database Engine)**: Indexes and stores attack data for fast search and analysis
+- **Kibana (Visualization)**: Real-time dashboard displaying threat intelligence through interactive charts
 
 #### Data Pipeline
-Attacker → Cowrie (Container) → shared_logs/cowrie.json → Filebeat (Container) → Elasticsearch (Container) → Kibana (Dashboard)
+Attacker → Cowrie → shared_logs/cowrie.json → Filebeat → Elasticsearch → Kibana Dashboard
 
 Technical Features & Configuration
 
@@ -55,6 +52,7 @@ Top 10 most common usernames.
 Top 10 most common passwords.
 
 <img width="960" height="510" alt="33" src="https://github.com/user-attachments/assets/6d51a86c-c9d4-4f70-89ff-50da1e087d3b" />
+
 
 
 
