@@ -53,5 +53,7 @@ Top 10 most common usernames.
 
 Top 10 most common passwords.
 
+<img width="960" height="540" alt="33" src="https://github.com/user-attachments/assets/dcfbd2d8-23e3-4e7d-9583-2fc32b10cef1" />
+
 
 
