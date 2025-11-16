@@ -4,10 +4,11 @@ This project is a 4-container, Docker-based threat intelligence system designed 
 
 The system is deployed on an AWS EC2 instance and uses the ELK Stack (Elasticsearch, Kibana) with Filebeat to create a dashboard of attacker Tactics, Techniques, and Procedures (TTPs).
 
-Final System Architecture
+## System Architecture
 
-The project was re-architected from a simple 3-container model to a more robust 4-container system to solve data-flow challenges. The final architecture is:
+The system evolved from a 3-container to a 4-container architecture to resolve critical data-flow challenges:
 
+### Container Components
 Cowrie (The Honeypot): The sensor, exposed to the internet. It catches SSH/Telnet attacks and writes them to a cowrie.json log file in a shared volume.
 
 Filebeat (The "Delivery Truck"): The log shipper. It monitors the shared log file, parses the NDJSON (Newline Delimited JSON) data, and ships the parsed fields to Elasticsearch.
@@ -16,7 +17,7 @@ Elasticsearch (The Database): The "engine." It receives the parsed JSON from Fil
 
 Kibana (The Dashboard): The "monitor." It reads from Elasticsearch and displays the data in real-time visualizations (pie charts, bar charts, etc.).
 
-Data Flow:
+#### Data Pipeline
 Attacker → Cowrie (Container) → shared_logs/cowrie.json → Filebeat (Container) → Elasticsearch (Container) → Kibana (Dashboard)
 
 Technical Features & Configuration
@@ -54,6 +55,7 @@ Top 10 most common usernames.
 Top 10 most common passwords.
 
 <img width="960" height="510" alt="33" src="https://github.com/user-attachments/assets/6d51a86c-c9d4-4f70-89ff-50da1e087d3b" />
+
 
 
 
