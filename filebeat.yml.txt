@@ -1,0 +1,12 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/cowrie/cowrie.json
+  json:
+    keys_under_root: true
+    overwrite_keys: true
+    add_error_key: true
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]

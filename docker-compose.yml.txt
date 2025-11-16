@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  cowrie:
+    image: cowrie/cowrie
+    container_name: cowrie
+    ports:
+      - "2222:2222"
+      - "2223:2223"
+    volumes:
+      - ./shared_logs:/cowrie/cowrie-git/var/log/cowrie
+    restart: always
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.15
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat-fixed.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./shared_logs:/var/log/cowrie:ro
+    depends_on:
+      - elasticsearch
+    restart: always
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.15
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.15
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    restart: always
+
+volumes:
+  esdata:
+    driver: local
