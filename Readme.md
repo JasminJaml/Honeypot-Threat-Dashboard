@@ -17,41 +17,36 @@ The system evolved from a 3-container to a 4-container architecture to resolve c
 #### Data Pipeline
 Attacker → Cowrie → shared_logs/cowrie.json → Filebeat → Elasticsearch → Kibana Dashboard
 
-Technical Features & Configuration
+## Technical Features & Configuration
 
-Orchestration: The entire 4-container stack is deployed and managed with a single docker-compose.yml file.
+- **Orchestration**: The entire 4-container stack is deployed and managed with a single docker-compose.yml file.
 
-Data Pipeline: Uses Filebeat with a custom filebeat.yml to correctly parse ndjson log files using the ndjson parser.
+- **Data Processing**: Filebeat with custom configuration using `json.keys_under_root: true` to properly extract and parse JSON fields from honeypot logs.
 
-Persistence: A shared "bind mount" folder (~/shared_logs) is used for log persistence and inter-container communication, which proved more reliable than named volumes for this use case.
+- **Persistence**: A shared "bind mount" folder (~/shared_logs) is used for log persistence and inter-container communication, which proved more reliable than named volumes for this use case.
 
-Security: The AWS Security Group is configured to be restrictive, only exposing the necessary ports (SSH, Kibana) to the admin's IP and the honeypot port to the public.
+- **Security**: The AWS Security Group is configured to be restrictive, only exposing the necessary ports (SSH, Kibana) to the admin's IP and the honeypot port to the public.
 
-Core Troubleshooting Challenge: Elasticsearch Mapping Conflict
+## Core Troubleshooting Challenge: Elasticsearch Mapping Conflict
 
 A major part of this project was diagnosing and solving a "silent failure" where all containers were healthy, but no parsed data appeared in Kibana.
 
-Problem: Early, broken data from a misconfigured Filebeat created a "corrupted schema" (Index Template) in Elasticsearch. This "corrupted memory" caused Elasticsearch to reject all new, correctly parsed fields.
+**Problem**: Early, broken data from a misconfigured Filebeat created a "corrupted schema" (Index Template) in Elasticsearch. This "corrupted memory" caused Elasticsearch to reject all new, correctly parsed fields.
 
-Solution (Option A): The system was fixed by following a precise, real-world troubleshooting plan:
+**Solution**: The system was fixed by following a precise, real-world troubleshooting plan:
+1. Stopped the filebeat container
+2. Manually deleted the corrupted index (`curl -X DELETE "localhost:9200/filebeat-*"`)
+3. Manually deleted the corrupted "blueprint" (`curl -X DELETE "localhost:9200/_index_template/filebeat-7.17.15"`)
+4. Relaunched the system, which forced Elasticsearch to create a new, correct schema from the good data
 
-Stopped the filebeat container.
-
-Manually deleted the corrupted index (curl -X DELETE "localhost:9200/filebeat-*")
-
-Manually deleted the corrupted "blueprint" (curl -X DELETE "localhost:9200/_index_template/filebeat-7.17.15").
-
-Relaunched the system, which forced Elasticsearch to create a new, correct schema from the good data.
-
-Final Result: The Dashboard
+## Final Result: The Dashboard
 
 The final Kibana dashboard visualizes key threat intelligence in real-time, including:
-
-Top 10 most common usernames.
-
-Top 10 most common passwords.
+- Top 10 most common usernames
+- Top 10 most common passwords
 
 <img width="960" height="510" alt="33" src="https://github.com/user-attachments/assets/6d51a86c-c9d4-4f70-89ff-50da1e087d3b" />
+
 
 
 
